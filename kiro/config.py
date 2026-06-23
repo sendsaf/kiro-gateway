@@ -273,20 +273,24 @@ HIDDEN_FROM_LIST: List[str] = ["auto"]
 # - Some models may not be available on your Kiro plan (e.g., Opus on free tier)
 # - New models released after this version won't appear here
 # - Update gateway regularly to get the latest model list
-FALLBACK_MODELS: List[Dict[str, str]] = [
-    {"modelId": "auto"},
-    {"modelId": "claude-sonnet-4"},
-    {"modelId": "claude-sonnet-4.5"},
-    {"modelId": "claude-sonnet-4.6"},
-    {"modelId": "claude-haiku-4.5"},
-    {"modelId": "claude-opus-4.5"},
-    {"modelId": "claude-opus-4.6"},
-    {"modelId": "claude-opus-4.7"},
-    {"modelId": "deepseek-3.2"},
-    {"modelId": "glm-5"},
-    {"modelId": "minimax-m2.1"},
-    {"modelId": "minimax-m2.5"},
-    {"modelId": "qwen3-coder-next"},
+FALLBACK_MODELS: List[Dict] = [
+    # 1M context: auto router and new Claude 4.x flagship models (Kiro docs)
+    {"modelId": "auto",              "tokenLimits": {"maxInputTokens": 1000000}},
+    {"modelId": "claude-sonnet-4.6", "tokenLimits": {"maxInputTokens": 1000000}},
+    {"modelId": "claude-opus-4.6",   "tokenLimits": {"maxInputTokens": 1000000}},
+    {"modelId": "claude-opus-4.7",   "tokenLimits": {"maxInputTokens": 1000000}},
+    {"modelId": "claude-opus-4.8",   "tokenLimits": {"maxInputTokens": 1000000}},
+    # 200K context: older Claude 4.x models and Haiku (Kiro docs)
+    {"modelId": "claude-sonnet-4",   "tokenLimits": {"maxInputTokens": 200000}},
+    {"modelId": "claude-sonnet-4.5", "tokenLimits": {"maxInputTokens": 200000}},
+    {"modelId": "claude-haiku-4.5",  "tokenLimits": {"maxInputTokens": 200000}},
+    {"modelId": "claude-opus-4.5",   "tokenLimits": {"maxInputTokens": 200000}},
+    # Non-Claude models
+    {"modelId": "deepseek-3.2",      "tokenLimits": {"maxInputTokens": 128000}},
+    {"modelId": "qwen3-coder-next",  "tokenLimits": {"maxInputTokens": 256000}},
+    {"modelId": "glm-5",             "tokenLimits": {"maxInputTokens": 200000}},
+    {"modelId": "minimax-m2.1",      "tokenLimits": {"maxInputTokens": 200000}},
+    {"modelId": "minimax-m2.5",      "tokenLimits": {"maxInputTokens": 200000}},
 ]
 
 # ==================================================================================================
@@ -297,7 +301,9 @@ FALLBACK_MODELS: List[Dict[str, str]] = [
 MODEL_CACHE_TTL: int = 3600
 
 # Default maximum number of input tokens
-DEFAULT_MAX_INPUT_TOKENS: int = 200000
+# Set to 1M to match the highest-tier models (sonnet-4-6, opus-4-6/4-7/4-8) on paid plans.
+# Per-model overrides in FALLBACK_MODELS take precedence over this value.
+DEFAULT_MAX_INPUT_TOKENS: int = 1000000
 
 # ==================================================================================================
 # Tool Description Handling (Kiro API Limitations)
